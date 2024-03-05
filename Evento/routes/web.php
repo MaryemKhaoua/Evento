@@ -30,4 +30,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/events', [EventController:: class, 'index'])->name('events.index');
 Route::get('/home', [EventController::class, 'create']);
+Route::post('/events', [EventController:: class, 'store'])->name('events.store');
+
+
