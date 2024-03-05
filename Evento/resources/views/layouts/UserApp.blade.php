@@ -53,38 +53,39 @@
         <a type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></a>
     </div>
     <div class="offcanvas-body">
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">title</label>
-            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="title">
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput2" class="form-label">description</label>
-            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="description">
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput2" class="form-label">Lieu</label>
-            <select class="form-select" aria-label="Default select example">
-                <option selected>choisir une ville</option>
-                <option value="1">Tanger</option>
-                <option value="2">Rabat</option>
-                <option value="3">Essaouira</option>
-                <option value="3">Marrakech</option>
-                <option value="3">Casablanca</option>
-                <option value="3">Oujda</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="">Date</label>
-            <input id="datepicker" width="276"/>
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput2" class="form-label">Choisir une image</label>
-            <input type="file" class="form-control" aria-label="file example" required>
-            <div class="invalid-feedback">Example invalid form file feedback</div>
-        </div>
-        <div class="mb-3">
-            <button class="btn btn-primary" type="submit" disabled>Add event</button>
-        </div>
+        <form method="POST" action="{{ route('events.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+            </div>
+            <div class="mb-3">
+                <label for="lieu" class="form-label">Lieu</label>
+                <select class="form-select" id="lieu" name="lieu" aria-label="Default select example">
+                    <option selected>Choose a city</option>
+                    <option value="Tanger">Tanger</option>
+                    <option value="Rabat">Rabat</option>
+                    <option value="Essaouira">Essaouira</option>
+                    <option value="Marrakech">Marrakech</option>
+                    <option value="Casablanca">Casablanca</option>
+                    <option value="Oujda">Oujda</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="text" class="form-control" id="date" name="date" placeholder="MM/DD/YYYY">
+            </div>
+            <div class="mb-3">
+                <label for="media" class="form-label">Choose an image</label>
+                <input type="file" class="form-control" id="media" name="media" aria-label="file example" required>
+                <div class="invalid-feedback">Example invalid form file feedback</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Event</button>
+        </form>
     </div>
 </div>
 
