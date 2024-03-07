@@ -15,8 +15,14 @@
                     <p class="card-text">{{ $event->description }}</p>
                     <p class="card-text"><strong>Date:</strong> {{ $event->date}}</p>
                     <p class="card-text"><strong>Lieu:</strong> {{ $event->lieu }}</p>
-                    {{-- <a href="{{ route('event.reserve', $event->id) }}" class="btn btn-primary">Réserver</a> --}}
-                    <a href="#" class="btn btn-primary">Réserver</a>
+                    <a href="{{ route('events.edit', $event->id) }}" class="btn btn-info">Update</a>
+                    <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    <a href="{{ route('details', $event->id) }}" class="btn btn-warning">Detail</a>
+
                 </div>
             </div>
         </div>
@@ -24,4 +30,10 @@
     </div>
 </div>
 
+<style>
+    .card-img-top {
+        height: 30em;
+        object-fit: cover;
+    }
+</style>
 @endsection

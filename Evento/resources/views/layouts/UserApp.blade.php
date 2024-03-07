@@ -27,7 +27,7 @@
 
 <header class="navbar navbar-expand-lg navbar-white bg-white shadow sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="" style="color: #2b0f71;"><span style="color: #7b080c;" class="nav-brand-two">You</span>Event</a>
+        <a class="navbar-brand" href="{{ route('events.index') }}" style="color: #2b0f71;"><span style="color: #7b080c;" class="nav-brand-two">You</span>Event</a>
         <div class="navbar-nav">
             <div class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -73,6 +73,25 @@
                     <option value="Marrakech">Marrakech</option>
                     <option value="Casablanca">Casablanca</option>
                     <option value="Oujda">Oujda</option>
+                    <option value="Youssofia">Youssofia</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="acceptation" class="form-label">Acceptation</label>
+                <select class="form-select" id="acceptation" name="acceptation" aria-label="Default select example">
+                    <option selected>Choose...</option>
+                    <option value="1">oui</option>
+                    <option value="0">non</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" aria-label="Default select example">
+                    <option selected>Choose...</option>
+                    <option value="1">music</option>
+                    <option value="2">comedie</option>
+                    <option value="3">art</option>
+                    <option value="4">sport</option>
                 </select>
             </div>
             <div class="mb-3">
