@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
+use App\Models\Category;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Route;
 
@@ -45,3 +47,14 @@ Route::get('/details/{id}', [EventController::class, 'details'])->name('details'
 Route::get('/ticket', [TicketController::class, 'create'])->name('ticket.create');
 Route::post('/tickets', [TicketController::class, 'store'])->name('ticket.store');
 
+
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/adminDashbord', [CategoryController::class, 'create'])->name('admin.dashboard');
+Route::get('/admincatg', [CategoryController::class, 'createCat'])->name('categoryAjouter');
+Route::post('/categories', [CategoryController::class, 'store'])->name('category.store');
+Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+
+
+
+Route::get('/events/search', [EventController::class, 'search'])->name('events.search');

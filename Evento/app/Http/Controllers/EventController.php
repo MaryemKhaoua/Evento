@@ -14,9 +14,10 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index( )
     {
-      $events = Event::all();
+      $events = Event::with('category')->get();
+    //   dd($events);
       return view('events.index', compact('events'));
     }
 
@@ -26,7 +27,7 @@ class EventController extends Controller
      */
     // public function create()
     // {
-    //    return view('Events.index');
+    //    return view('events.index');
     // }
 
     /**
@@ -49,7 +50,8 @@ class EventController extends Controller
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'lieu' => $request->input('lieu'),
-            'date' => Carbon::createFromFormat('m/d/Y', $request->input('date'))->format('Y-m-d'),
+            'date' =>  $request->input('date'),
+            // 'date' => Carbon::createFromFormat('m/d/Y', $request->input('date'))->format('Y-m-d'),
             'user_id' => $authUserId,
             'category_id' => $request->input('category'),
             'acceptation' => $request->input('acceptation'),
@@ -122,5 +124,12 @@ class EventController extends Controller
             $event = Event::find($id);
 
             return view('events.detail', compact('event'));
+        }
+
+        public function search(Request $request)
+        {
+            $title = $request->input('title');
+            $events = Event::where('title', 'like', "%$title%")->get();
+            return view('events.searchRes', compact('events'));
         }
 }

@@ -25,27 +25,44 @@
 </head>
 <body>
 
-<header class="navbar navbar-expand-lg navbar-white bg-white shadow sticky-top">
-    <div class="container">
-        <a class="navbar-brand" href="{{ route('events.index') }}" style="color: #2b0f71;"><span style="color: #7b080c;" class="nav-brand-two">You</span>Event</a>
-        <div class="navbar-nav">
-            <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    My Account
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                           style="color: #000000; text-decoration: none;  padding: .375rem .75rem; font-size: 1rem;
-                                 line-height: 1.5; ">Add Event</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
-                </ul>
+    <header class="navbar navbar-expand-lg navbar-white bg-white shadow sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('events.index') }}" style="color: #2b0f71;"><span style="color: #7b080c;" class="nav-brand-two">You</span>Event</a>
+            <div class="navbar-nav">
+                <div >
+                    <form class="d-flex" role="search">
+                        <input class="form-control" type="text" id="search_title" placeholder="Search">
+                        <div id="searchResults"></div>
+                    </form>
+                  </div>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ Auth::user()->name }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li><a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                               style="color: #000000; text-decoration: none;  padding: .375rem .75rem; font-size: 1rem;
+                                     line-height: 1.5; ">Add Event</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="sidebar-item">
+                            <div class="sidebar-link waves-effect waves-dark sidebar-link">
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        {{ __('Log Out') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
+
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
@@ -88,15 +105,14 @@
                 <label for="category" class="form-label">Category</label>
                 <select class="form-select" id="category" name="category" aria-label="Default select example">
                     <option selected>Choose...</option>
-                    <option value="1">music</option>
-                    <option value="2">comedie</option>
-                    <option value="3">art</option>
-                    <option value="4">sport</option>
+                    @foreach($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
                 </select>
             </div>
-            <div class="mb-3">
-                <label for="date" class="form-label">Date</label>
-                <input type="text" class="form-control" id="date" name="date" placeholder="MM/DD/YYYY">
+            <div class=" mb-3">
+                <label for="exampleFormControlTextarea1">date</label>
+                <input name="date" class="form-control" id="exampleFormControlTextarea1" type="datetime-local"></input>
             </div>
             <div class="mb-3">
                 <label for="media" class="form-label">Choose an image</label>
@@ -110,15 +126,30 @@
 
 @yield('content')
 
+
+
 <script>
-    $('#datepicker').datepicker({
-        uiLibrary: 'bootstrap5'
+    $(document).ready(function() {
+        $('#search_title').keyup(function() {
+            var title = $(this).val();
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('events.search') }}',
+                data: { title: title },
+                success: function(data) {
+                    $('#searchResults').html(data);
+                },
+                error: function(error) {
+                    console.error("Error during search:", error);
+                }
+            });
+        });
     });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-
 </body>
 </html>
