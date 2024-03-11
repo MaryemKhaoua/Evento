@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Category;
 use App\Services\CategoryService;
 use App\services\CategoryServiceInterface;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,5 +29,6 @@ class AppServiceProvider extends ServiceProvider
             $view->with('categories', $categories);
 
     });
+    Paginator::useBootstrap();
     }
 }

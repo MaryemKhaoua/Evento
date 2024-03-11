@@ -2,86 +2,83 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\Reservation;
 use App\Models\Ticket;
-use App\Http\Requests\StoreTicketRequest;
-use App\Http\Requests\UpdateTicketRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class TicketController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function ShowAddTickets($id)
     {
-        //
+        $event = Event::findOrFail($id);
+
+        return view('tickets.create', ['event' => $event]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $id)
+    public function createTickets(Request $request)
     {
-        return view('tickets.create', ['id' => $id->id]);
-    }
+        $messages = [
+            'nTickets.required' => 'You need to add a Tickets Number.',
+            'nTickets.integer' => 'Tickets Number must be an integer.',
+            'nTickets.min' => 'Tickets Number must be at least 1.',
+            'price.required' => 'You need to add a Price.',
+            'price.numeric' => 'Price must be a number.',
+            'price.min' => 'Price must be at least 1.',
+            'type.required' => 'You need to select a Ticket Type.',
+            'type.in' => 'Invalid Ticket Type. Please choose either Standard or VIP.',
+        ];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreTicketRequest $request)
-    {
-        // dd($request->all());
-        // $validate = $request->validate([
-        //     'nbrPlace' => 'required',
-        //     'type' => 'required|string',
-        //     'price' => 'required|float',
+        $request->validate([
+            'nbrPlace' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:1',
+            'type' => 'required|in:Standard,VIP',
+        ], $messages);
 
-        // ]);
+        $checkTicket = Ticket::where('type', $request->input('type'))
+            ->where('event_id', $request->input('event_id'))
+            ->first();
 
-        $ticket = Ticket::create([
+        if ($checkTicket) {
+
+            return redirect()->back()->with('error', 'Ticket already exists for this event and type!');
+        }
+
+        $ticket = new Ticket([
             'nbrPlace' => $request->input('nbrPlace'),
-            'type' => $request->input('type'),
             'price' => $request->input('price'),
             'event_id' => $request->input('event_id'),
-
-
-
+            'type' => $request->input('type'),
         ]);
-        return redirect()->route('events.index')->with('success', 'Event created');
 
+        $ticket->save();
+        if ($ticket != NULL) {
+            return redirect()->back()->with('success', 'Tickets added successfully! You can Add Another Tickets Type');
+        } else {
 
+            return redirect()->back()->withErrors(['message' => 'Error']);
+        }
     }
 
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Ticket $ticket)
+    public function acceptTicket(Reservation $reservation)
     {
-        //
+        $reservation->update(['status' => 'Accepted']);
+
+        return redirect()->back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Ticket $ticket)
+    public function refuseTicket(Reservation $reservation)
     {
-        //
-    }
+        $reservation->update(['status' => 'Refused']);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTicketRequest $request, Ticket $ticket)
-    {
-        //
-    }
+        $nbrPlace = DB::table('tickets')->select('nbrPlace')->where('id', $reservation->ticket->id)->value('nbrPlace');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Ticket $ticket)
-    {
-        //
+        $aTickets = $nbrPlace + 1;
+
+        DB::table('tickets')->where('id', $reservation->ticket->id)->update(['nbrPlace' => $aTickets]);
+
+        return redirect()->back();
     }
 }

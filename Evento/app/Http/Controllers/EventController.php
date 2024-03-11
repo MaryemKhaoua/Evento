@@ -3,36 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index( )
+    public function index()
     {
-      $events = Event::with('category')->get();
-    //   dd($events);
-      return view('events.index', compact('events'));
+        $events = Event::where('status', 1)->paginate(10);
+        return view('events.index', compact('events'));
     }
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //    return view('events.index');
-    // }
-
-    /**
-     * Store a newly created resource in storage.
-     */
 
 
     public function store(Request $request)
@@ -64,8 +53,15 @@ class EventController extends Controller
 
       $event = Event::create($data);
          $event_id = $event->id;
-        if ($event != NULL) {
-            return redirect()->route('ticket.create', ['id' => $event_id])->with('success', 'Event created');        }
+
+         $event->status = '0';
+         $event->save();
+
+         if ($event) {
+            return redirect()->route('ticket.create', ['id' => $event_id])->with('success', 'Event created');
+        } else {
+            return back()->withInput()->with('error', 'Failed to create event');
+        }
 
 
     }
@@ -123,7 +119,9 @@ class EventController extends Controller
         {
             $event = Event::find($id);
 
-            return view('events.detail', compact('event'));
+            $tTickets = DB::table('tickets')->where('event_id', $id)->sum('nbrPlace');
+
+            return view('events.detail', compact('event', 'tTickets'));
         }
 
         public function search(Request $request)
@@ -132,4 +130,24 @@ class EventController extends Controller
             $events = Event::where('title', 'like', "%$title%")->get();
             return view('events.searchRes', compact('events'));
         }
+
+
+    public function EventsUser()
+    {
+        $user = auth()->id();
+        $events = Event::where('user_id', $user)->get();
+
+        return view('organisateur.myevent', compact('events'));
+    }
+
+    public function EventUserStats($id)
+    {
+        $event = Event::find($id);
+        $tickets = Ticket::where('event_id', $id)->get();
+        $tTickets = $tickets->sum('nbrPlace');
+
+        $reservations = Reservation::whereIn('ticket_id', $tickets->pluck('id'))->get();
+
+        return view('organisateur.ticketstatus', compact('event', 'tTickets', 'tickets', 'reservations'));
+    }
 }

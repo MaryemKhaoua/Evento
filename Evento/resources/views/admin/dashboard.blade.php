@@ -63,9 +63,9 @@
             <ul class="list-unstyled">
                 <li><h5>dashboard</h5></li>
                 <li><a href="{{ route('categories.index') }}">CATEGORIES</a></li>
-                <li><a href="#">ACCEPTATION</a></li>
+                <li><a href="{{ route('acceptaion.event') }}">ACCEPTATION</a></li>
                 <li><a href="#">USERS</a></li>
-                <li><a href="#">STATISTIQUES</a></li>
+                <li><a href="{{ route('admin.statistics') }}">STATISTIQUES</a></li>
             </ul>
         </aside>
     </div>

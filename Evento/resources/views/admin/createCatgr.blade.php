@@ -75,11 +75,7 @@
     </div>
     @endif
 
-    @if(session('success'))
-    <div class="alert alert-success" id="alert">
-        {{ session('success') }}
-    </div>
-    @endif
+
 
     {{-- @if(session('category'))
     <div class="category">
@@ -115,8 +111,24 @@
         </li>
         @endforeach
     </ul>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+    {{-- <div class="alert alert-success" id="alert">
+        {{ session('success') }}
+    </div> --}}
+    <script>
+        Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "{{ session('success') }}",
+        showConfirmButton: false,
+        timer: 1500
+});
+    </script>
+    @endif
 </body>
 
 </html>
+
 
 @endsection

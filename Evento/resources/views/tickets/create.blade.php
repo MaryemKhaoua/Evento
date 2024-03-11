@@ -2,43 +2,64 @@
 
 @section('content')
 
-<style>
-
-    .back {
-        margin-top: 20px;
-    }
-
-    .event-info {
-        flex: 1;
-        margin-right: 20px;
-    }
-
-    .ticket-card {
-        flex: 1;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 20px;
-        margin-top: 20px;
-    }
-</style>
-
-    <div class="ticket-card">
-        <h3>Add Tickets</h3>
-        <form action="{{ route('ticket.store') }}" method="post">
-            @csrf
-            <label for="type">Ticket Type:</label>
-            <select name="type" id="type">
-                <option value="standard">Standard</option>
-                <option value="vip">VIP</option>
-            </select><br><br>
-            <label for="nbrPlace">Number of Tickets:</label>
-            <input type="number" name="nbrPlace" id="nbrPlace" min="0" value="0"><br><br>
-            <label for="price">Price:</label>
-            <input type="text" name="price" id="price" min="0" value="0"><br><br>
-            <input type="hidden" name="event_id" value="{{ $id }}">
-            <button type="submit" class="btn btn-success">Add Tickets</button>
-        </form>
-    </div>
+@if(session('success'))
+<div class="alert alert-success" role="alert">
+    {{ session('success') }}
 </div>
+@endif
+
+<div class="welcome-page">
+    <h2 class="welcome-message">Add Tickets</h2>
+    <p>You Can Add Tickets To Your Event Here! Thank You.</p>
+</div>
+
+<main>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" action="{{ route('ticket.create', ['id' => $event->id]) }}" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="event_id" value="{{ $event->id }}">
+                            <div class="mb-3">
+                                <label for="nbrPlace" class="form-label" min="0">Number of Tickets:</label>
+                                <input type="number" id="nbrPlace" name="nbrPlace" class="form-control">
+                                @error('nbrPlace')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price: (DH)</label>
+                                <input type="number" step="0.01" id="price" name="price" class="form-control">
+                                @error('price')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="border p-5 mb-4">
+                                <label class="form-label">Type:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="Standard" name="type" id="type_standard">
+                                    <label class="form-check-label" for="type_standard">Standard</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="VIP" name="type" id="type_vip">
+                                    <label class="form-check-label" for="type_vip">VIP</label>
+                                </div>
+                                @error('type')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <button name="submit" type="submit" class="btn btn-info">Add Tickets</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
 @endsection

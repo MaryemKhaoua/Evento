@@ -14,13 +14,6 @@ class CategoryController extends Controller {
     return view('admin.createCatgr', compact('categories'));
 }
 
-    public function create(){
-        return view('admin.dashboard');
-    }
-
-    public function createCat(){
-        return view('admin.createCatgr');
-    }
 
     public function store(Request $request)
     {
@@ -43,11 +36,18 @@ class CategoryController extends Controller {
 
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::find($id);
 
-        $category->delete();
+        if ($category) {
+            
+            $category->delete();
+            return redirect('/categories')->with('success', 'Category deleted successfully');
+        } else {
 
-        return redirect('/categories');
+            return redirect('/categories')->with('error', 'Category not found');
+        }
     }
+
+
 
 }

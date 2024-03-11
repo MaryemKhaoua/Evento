@@ -17,6 +17,8 @@
           crossorigin="anonymous">
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="@sweetalert2/themes/dark/dark.css">
+
     <style>
         .input-group-append {
             cursor: pointer;
@@ -31,29 +33,28 @@
             <div class="navbar-nav">
                 <div >
                     <form class="d-flex" role="search">
-                        <input class="form-control" type="text" id="search_title" placeholder="Search">
-                        <div id="searchResults"></div>
+                        <input class="form-control" type="text" id="search_title" placeholder="Search by Title">
                     </form>
-                  </div>
+                </div>
                 <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{ Auth::user()->name }}
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {{-- @if(Auth::user()->id == 1) --}}
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        {{-- @endif
+                        @if(Auth::user()->id == 2) --}}
+                            <li><a class="dropdown-item" href="{{ route('myevents') }}">My Events</a></li>
+                            <li><a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" style="color: #000000; text-decoration: none;  padding: .375rem .75rem; font-size: 1rem; line-height: 1.5; ">Add Event</a></li>
+                        {{-- @endif --}}
                         <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
-                        <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li><a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                               style="color: #000000; text-decoration: none;  padding: .375rem .75rem; font-size: 1rem;
-                                     line-height: 1.5; ">Add Event</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li class="sidebar-item">
                             <div class="sidebar-link waves-effect waves-dark sidebar-link">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        {{ __('Log Out') }}
-                                    </button>
+                                    <button type="submit" class="dropdown-item">{{ __('Log Out') }}</button>
                                 </form>
                             </div>
                         </li>
@@ -62,7 +63,6 @@
             </div>
         </div>
     </header>
-
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
@@ -89,18 +89,20 @@
                     <option value="Essaouira">Essaouira</option>
                     <option value="Marrakech">Marrakech</option>
                     <option value="Casablanca">Casablanca</option>
+                    <option value="Fes">Fes</option>
+                    <option value="Mekness">Mekness</option>
                     <option value="Oujda">Oujda</option>
                     <option value="Youssofia">Youssofia</option>
                 </select>
             </div>
-            <div class="mb-3">
-                <label for="acceptation" class="form-label">Acceptation</label>
-                <select class="form-select" id="acceptation" name="acceptation" aria-label="Default select example">
-                    <option selected>Choose...</option>
-                    <option value="1">oui</option>
-                    <option value="0">non</option>
-                </select>
-            </div>
+            <select id="acceptation" name="acceptation" class="form-control">
+                <option value="0">Auto</option>
+                <option value="1">Manuelle</option>
+            </select>
+            @error('acceptation')
+            <div class="alert alert-danger">- {{ $message }}</div>
+            @enderror
+        </div>
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
                 <select class="form-select" id="category" name="category" aria-label="Default select example">
@@ -123,20 +125,27 @@
         </form>
     </div>
 </div>
+<div class="container mt-4">
+    <div class="row">
 
+<div id="searchResults"></div>
+        </div>
+    </div>
+</div>
 @yield('content')
 
 
 
 <script>
     $(document).ready(function() {
-        $('#search_title').keyup(function() {
-            var title = $(this).val();
+        $('#search_title, #search_category').on('keyup change', function() {
+            var title = $('#search_title').val();
+            var category = $('#search_title').val();
 
             $.ajax({
                 type: 'GET',
                 url: '{{ route('events.search') }}',
-                data: { title: title },
+                data: { title: title, category: category },
                 success: function(data) {
                     $('#searchResults').html(data);
                 },
@@ -147,6 +156,7 @@
         });
     });
 </script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
